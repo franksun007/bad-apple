@@ -25,7 +25,7 @@ constexpr int32_t kImageWidth = 480;
 constexpr int32_t kImageHeight = 360;
 constexpr int32_t kRgbSize = kImageWidth * kImageHeight * kColorComponent;
 
-std::vector<uint8_t> readPPM(const std::string &filename) {
+std::vector<uint8_t> ReadPPM(const std::string &filename) {
   constexpr int32_t kPPMHeaderSize = 15;
   std::ifstream file(filename.c_str(), std::ios::binary);
 
@@ -102,7 +102,7 @@ int main(int argc, char **argv) {
     // Schedule the work
     for (int i = 0; i < kChunkSize; i++) {
       pointer[i] = std::async(std::launch::async, ProcessFrame,
-                              readPPM(all_filelist[fl_index + i]));
+                              ReadPPM(all_filelist[fl_index + i]));
     }
     // Sync
     for (int i = 0; i < kChunkSize; i++) {
@@ -113,7 +113,7 @@ int main(int argc, char **argv) {
   // Tail work
   for (; fl_index < all_filelist.size(); fl_index++) {
     all_frame[fl_index] =
-        ProcessFrame(readPPM(all_filelist[fl_index]));
+        ProcessFrame(ReadPPM(all_filelist[fl_index]));
   }
 
   // Print Frame
