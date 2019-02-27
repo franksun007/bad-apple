@@ -12,3 +12,14 @@ A toy example to segment bad apple and replay it on terminal.
 # Is it possible to use different video with different resolution?
 
 Shouldn't be hard to modify.
+
+# Dependency:
+
+You need ffmpeg to segment the video into ppm:
+
+    sudo apt install ffmpeg
+
+You need gflags to parse the command line:
+    
+    sudo apt install libgflags-dev
+
