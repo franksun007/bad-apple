@@ -29,9 +29,6 @@ std::vector<uint8_t> readPPM(const std::string &filename) {
   constexpr int32_t kPPMHeaderSize = 15;
   std::ifstream file(filename.c_str(), std::ios::binary);
 
-  file.seekg(0, file.end);
-  file.seekg(0, file.beg);
-
   std::vector<uint8_t> data;
   data.resize(kRgbSize);
 
