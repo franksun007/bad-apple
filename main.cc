@@ -33,6 +33,7 @@ std::vector<uint8_t> readPPM(const std::string &filename) {
   data.resize(kRgbSize);
 
   file.ignore(kPPMHeaderSize);
+  // TODO(Frank): Unsafe
   file.read((char *)data.data(), kRgbSize);
 
   return data;
@@ -66,7 +67,7 @@ std::string ProcessFrame(const std::vector<uint8_t> data) {
       if (sum < 20) {
         ss << "\033[1;31m0";
       } else if (sum < 500) {
-        int randnum = ((unsigned int)(j + i + sum + std::rand())) % 4 + 2;
+        int randnum = (j + i + sum + std::rand()) % 4 + 2;
         ss << "\033[1;3" << randnum << "m" << randnum;
       } else {
         ss << "\033[1;36m1";
