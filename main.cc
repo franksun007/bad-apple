@@ -65,6 +65,14 @@ std::string ProcessFrame(const std::vector<uint8_t> data) {
       }
       sum /= FLAGS_subsample;
 
+      // TODO(Frank): move to namespace {}
+      constexpr char kBlack[] = "\033[1;30m";
+      constexpr char kRed[] = "\033[1;31m";
+      constexpr char kWhite[] = "\033[1;97m";
+      constexpr char kCyan[] = "\033[1;36m";
+      constexpr char kLightGray[] = "\033[1;37m";
+      constexpr char kDarkGray[] = "\033[1;90m";
+
       // TODO(Frank): Use make switch?
       // TODO(Frank): None linear
       if (sum < 20) {
@@ -72,14 +80,22 @@ std::string ProcessFrame(const std::vector<uint8_t> data) {
         if (prev_result == 0) {
           ss << "0";
         } else {
-          ss << "\033[1;31m0";
+          ss << kBlack << "0";
         }
         prev_result = 0;
 
       } else if (sum < 500) {
         int randnum = (j + i + sum + std::rand()) % 4 + 2;
+        if (randnum % 4 == 0) {
+          ss << kDarkGray << randnum;
+        } else if (randnum % 4 == 1) {
+          ss << kWhite << randnum;
+        } else if (randnum % 4 == 2) {
+          ss << kBlack << randnum;
+        } else {
+          ss << kLightGray << randnum;
+        }
 
-        ss << "\033[1;3" << randnum << "m" << randnum;
         /*
         if (prev_result == 2) {
             ss << randnum;
@@ -94,7 +110,7 @@ std::string ProcessFrame(const std::vector<uint8_t> data) {
         if (prev_result == 1) {
           ss << "1";
         } else {
-          ss << "\033[1;36m1";
+          ss << kWhite << "1";
         }
         prev_result = 1;
       }
@@ -109,7 +125,7 @@ void PrintFrame(const std::string &string) {
   int result = 0;
   setupterm(NULL, STDOUT_FILENO, &result);
   putp(tigetstr("clear"));
-  printf("%s\n", string.c_str());
+  std::cout << string << std::endl;
   // TODO(Frank): magic number
   usleep(
       (int32_t)(0.03333333333 * 1000000 * 30 / FLAGS_fps / FLAGS_acceleration));
