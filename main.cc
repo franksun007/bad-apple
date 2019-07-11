@@ -14,6 +14,7 @@
 #include "gflags/gflags.h"
 
 DEFINE_string(frames, "", "The folder contains all the frames");
+// TODO(Frank): support fractional subsampling
 DEFINE_int32(subsample, 2, "Subsamples of each frame");
 DEFINE_int32(fps, 30, "The FPS to play on the terminal");
 DEFINE_int32(acceleration, 1,
@@ -55,6 +56,7 @@ std::string ProcessFrame(const std::vector<uint8_t> data) {
   std::stringstream ss;
   constexpr int32_t kStride = kImageWidth * kColorComponent;
   for (int j = 0; j < kImageHeight; j += FLAGS_subsample) {
+    int32_t prev_result = -1;
     for (int i = 0; i < kStride - (kColorComponent * FLAGS_subsample - 1);
          i += kColorComponent * FLAGS_subsample) {
       int sum = 0;
@@ -66,13 +68,37 @@ std::string ProcessFrame(const std::vector<uint8_t> data) {
       // TODO(Frank): Use make switch?
       // TODO(Frank): None linear
       if (sum < 20) {
-        ss << "\033[1;31m0";
+
+        if (prev_result == 0) {
+          ss << "0";
+        } else {
+          ss << "\033[1;31m0";
+        }
+        prev_result = 0;
+
       } else if (sum < 500) {
         int randnum = (j + i + sum + std::rand()) % 4 + 2;
+
         ss << "\033[1;3" << randnum << "m" << randnum;
+        /*
+        if (prev_result == 2) {
+            ss << randnum;
+        } else {
+            ss << "\033[1;3" << randnum << "m" << randnum;
+        }
+        */
+        prev_result = 2;
+
       } else {
-        ss << "\033[1;36m1";
+
+        if (prev_result == 1) {
+          ss << "1";
+        } else {
+          ss << "\033[1;36m1";
+        }
+        prev_result = 1;
       }
+      ss << " ";
     }
     ss << "\n";
   }
